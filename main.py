@@ -1,5 +1,7 @@
-import components
+import data_components
+import calc_components
 import load
+from calculate.calculate_concentrate_composition import calculate_composition
 import dearpygui.dearpygui as dpg
 
 dpg.create_context()
@@ -11,24 +13,15 @@ with dpg.font_registry():
 dpg.bind_font("Default font")
 
 data = load.load_data()
-mol_weight = load.load_mol_weight()
+composition = calculate_composition(data["Состав сухого концентрата"], 100.0, 85.0)
 
 with dpg.window(label="Симуляция", width=1000, height=700, min_size=[800, 500]):
     with dpg.menu_bar():
         with dpg.menu(label="Данные"):
-            dpg.add_menu_item(label="Состав", callback=components.create_initial_table(data))
-            dpg.add_menu_item(label="Молекуляр. веса")
-
-# with dpg.window(label="Данные", width=800, height=500, min_size=[800, 500]):
-#     with dpg.table(header_row=False):
-#         dpg.add_table_column()
-#         dpg.add_table_column()
-
-#         with dpg.table_row():
-#                 with dpg.table_cell():
-#                     components.create_initial_table(data)
-#                 with dpg.table_cell():
-#                     components.create_mol_table(mol_weight)
+            dpg.add_menu_item(label="Состав", callback=data_components.create_initial_table)
+            dpg.add_menu_item(label="Молекуляр. веса", callback=data_components.create_mol_table)
+        with dpg.menu(label="Расчет"):
+            dpg.add_menu_item(label="Рац.состав", callback=calc_components.create_composition_table)
 
 
 dpg.setup_dearpygui()

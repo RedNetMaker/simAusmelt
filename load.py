@@ -19,6 +19,3 @@ def load_mol_weight():
         print("Файл не найден!")
     except json.JSONDecodeError:
         print("Ошибка в формате JSON!")
-
-def get_init_structure(data):
-    pass
