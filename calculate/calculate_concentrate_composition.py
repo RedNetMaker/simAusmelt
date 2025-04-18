@@ -7,12 +7,27 @@
 
 import load
 
+def to_mass(input_concentrate: dict, mass_kg: float):
+    concentrate = {}
+    #Переводит % в кг
+    concentrate["Прочие"] = 0
+    for c in input_concentrate:
+        if c != "Прочие":
+            if c != "Влажность(%)":
+                concentrate["Прочие"] += input_concentrate[c]
+                concentrate[c] = input_concentrate[c] * mass_kg / 100
+            else:
+                concentrate[c] = input_concentrate[c] * mass_kg / (100 - input_concentrate[c])
+    concentrate["Прочие"] = (100 - concentrate["Прочие"]) * mass_kg / 100
 
-def calculate_composition(input_concentrate: dict, mass_kg: float, proc_cufes2: float):
-    mol_weight = load.load_mol_weight()
+    return concentrate
+
+
+def calculate_composition(input: dict, mass_kg: float, proc_cufes2: float):
     components = ["Cu", "Fe", "S", "Zn", "Pb", "SiO2", "Al2O3", "CaO", "MgO", "CO2", "Прочие", "Всего"]
     compounds = ["CuFeS2", "CuS", "Cu2S", "FeS2", "ZnS", "PbS", "CaCO3", "MgCO3", "SiO2", "Al2O3", "Прочие", "Всего"]
     rational_composition = {}
+    mol_weight = load.load_mol_weight()
 
     #Составляем массив из элементов
     for r in components:
@@ -22,15 +37,7 @@ def calculate_composition(input_concentrate: dict, mass_kg: float, proc_cufes2: 
         rational_composition[r] = composition
 
     #Переводит % в кг
-    input_concentrate["Прочие"] = 0
-    for c in input_concentrate:
-        if c != "Прочие":
-            if c != "Влажность(%)":
-                input_concentrate["Прочие"] += input_concentrate[c]
-                input_concentrate[c] = input_concentrate[c] * mass_kg / 100
-            else:
-                input_concentrate[c] = input_concentrate[c] * mass_kg / (100 - input_concentrate[c])
-    input_concentrate["Прочие"] = (100 - input_concentrate["Прочие"]) * mass_kg / 100
+    input_concentrate = to_mass(input, mass_kg)
 
     #Расчет
 
